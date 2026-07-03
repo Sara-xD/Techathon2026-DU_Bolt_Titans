@@ -1,4 +1,7 @@
-discord.py==2.4.0
+discord.py==2.7.1
 google-genai==2.10.0
 python-dotenv==1.0.1
 aiohttp==3.10.11
+# audioop was removed from the stdlib in Python 3.13 (PEP 594); discord.py needs
+# this backport there. Harmless / not installed on Python < 3.13.
+audioop-lts==0.2.2; python_version >= "3.13"
