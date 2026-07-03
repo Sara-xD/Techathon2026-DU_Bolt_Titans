@@ -23,6 +23,10 @@ Both read from a **single source of truth**, so they can never disagree about re
 
 ![Dashboard](docs/dashboard.png)
 
+**Light & dark themes** (toggle in the top bar; remembers your choice and follows your OS preference):
+
+![Light mode](docs/dashboard-light.png)
+
 The dashboard is fully responsive and works on phones too:
 
 <img src="docs/dashboard-mobile.png" alt="Mobile dashboard" width="280"/>

@@ -11,6 +11,29 @@
   --amber: #ffbb3c;
   --red: #ff5c6c;
   --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  /* theme-aware surfaces (flip in light mode) */
+  --surface-subtle: rgba(255, 255, 255, 0.04);
+  --surface-chip: rgba(255, 255, 255, 0.02);
+  --track: rgba(255, 255, 255, 0.05);
+  --off: #384259;        /* off-state indicator dot */
+  --off-fill: #4a5573;   /* off-state device icons */
+  --page-bg: radial-gradient(1200px 600px at 20% -10%, #182444 0%, #0b1020 55%);
+}
+
+:root[data-theme="light"] {
+  --bg: #eef1f8;
+  --bg-elev: #ffffff;
+  --bg-card: #ffffff;
+  --border: #dde3ee;
+  --text: #17213a;
+  --text-dim: #5a6a85;
+  --shadow: 0 8px 24px rgba(23, 33, 58, 0.08);
+  --surface-subtle: rgba(23, 33, 58, 0.04);
+  --surface-chip: rgba(23, 33, 58, 0.025);
+  --track: rgba(23, 33, 58, 0.08);
+  --off: #c2cbdb;
+  --off-fill: #aeb8cc;
+  --page-bg: radial-gradient(1200px 600px at 20% -10%, #e7ecf9 0%, #eef1f8 55%);
 }
 
 * { box-sizing: border-box; }
@@ -18,10 +41,11 @@
 body {
   margin: 0;
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-  background: radial-gradient(1200px 600px at 20% -10%, #182444 0%, var(--bg) 55%);
+  background: var(--page-bg);
   color: var(--text);
   min-height: 100vh;
   overflow-x: hidden; /* safety net against any accidental horizontal overflow */
+  transition: background 0.25s ease, color 0.25s ease;
 }
 
 .app { max-width: 1400px; margin: 0 auto; padding: 20px; }
@@ -66,6 +90,13 @@ body {
 .conn.off { color: var(--amber); }
 .conn.off .dot { background: var(--amber); }
 
+.theme-toggle {
+  background: var(--surface-subtle); border: 1px solid var(--border); color: var(--text);
+  width: 38px; height: 38px; border-radius: 10px; cursor: pointer; font-size: 17px;
+  display: grid; place-items: center; transition: background 0.2s;
+}
+.theme-toggle:hover { background: var(--track); }
+
 /* ---------- Stat cards ---------- */
 .stat-cards {
   display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-bottom: 18px;
@@ -77,7 +108,7 @@ body {
 }
 .stat-icon {
   font-size: 24px; width: 48px; height: 48px; display: grid; place-items: center;
-  border-radius: 12px; background: rgba(255, 255, 255, 0.04);
+  border-radius: 12px; background: var(--surface-subtle);
 }
 .stat-body { display: flex; flex-direction: column; min-width: 0; }
 .stat-value { overflow: hidden; text-overflow: ellipsis; }
@@ -112,18 +143,18 @@ body {
 .legend-swatch.light-on { background: var(--amber); box-shadow: 0 0 8px var(--amber); }
 .floorplan-svg { width: 100%; height: auto; display: block; max-width: 100%; }
 
-.office-wall { fill: rgba(255, 255, 255, 0.015); stroke: var(--border); stroke-width: 2; }
+.office-wall { fill: var(--surface-subtle); stroke: var(--border); stroke-width: 2; }
 .room-rect { fill: rgba(79, 140, 255, 0.04); stroke: var(--border); stroke-width: 1.5; }
 .room-title { fill: var(--text-dim); font-size: 15px; font-weight: 600; text-anchor: middle; }
 
-.fan-ring { fill: rgba(255, 255, 255, 0.03); stroke: var(--border); stroke-width: 1.5; }
-.fan-blades { fill: #4a5573; transform-box: fill-box; transform-origin: center; }
+.fan-ring { fill: var(--track); stroke: var(--border); stroke-width: 1.5; }
+.fan-blades { fill: var(--off-fill); transform-box: fill-box; transform-origin: center; }
 .fan-hub { fill: var(--text-dim); }
 .floor-fan.on .fan-blades { fill: var(--accent); animation: spin 0.7s linear infinite; }
 .floor-fan.on .fan-ring { stroke: var(--accent); }
 
 .light-halo { fill: transparent; }
-.light-bulb { fill: #39435f; stroke: var(--border); stroke-width: 1.5; }
+.light-bulb { fill: var(--off-fill); stroke: var(--border); stroke-width: 1.5; }
 .floor-light.on .light-bulb { fill: var(--amber); stroke: var(--amber); }
 .floor-light.on .light-halo { fill: var(--amber); opacity: 0.22; animation: pulse 2s ease-in-out infinite; }
 
@@ -142,22 +173,22 @@ body {
 .device-chip {
   display: flex; align-items: center; gap: 8px;
   padding: 8px 10px; border-radius: 10px;
-  background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border);
+  background: var(--surface-chip); border: 1px solid var(--border);
   transition: background 0.2s, border-color 0.2s;
 }
 .device-chip.on { background: rgba(79, 140, 255, 0.08); border-color: rgba(79, 140, 255, 0.4); }
 .device-meta { display: flex; flex-direction: column; flex: 1; min-width: 0; }
 .device-label { font-size: 12px; font-weight: 600; }
 .device-state { font-size: 11px; color: var(--text-dim); }
-.state-dot { width: 8px; height: 8px; border-radius: 50%; background: #384259; }
+.state-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--off); }
 .state-dot.on { background: var(--green); box-shadow: 0 0 8px var(--green); }
 
 /* device chip icons */
 .dev-icon .blades, .dev-icon .bulb, .dev-icon .base, .dev-icon .hub { transition: fill 0.2s; }
-.dev-icon.fan .blades { fill: #4a5573; transform-box: fill-box; transform-origin: center; }
+.dev-icon.fan .blades { fill: var(--off-fill); transform-box: fill-box; transform-origin: center; }
 .dev-icon.fan .hub { fill: var(--text-dim); }
 .dev-icon.fan.on .blades { fill: var(--accent); animation: spin 0.7s linear infinite; }
-.dev-icon.light .bulb { fill: #4a5573; }
+.dev-icon.light .bulb { fill: var(--off-fill); }
 .dev-icon.light .base { fill: var(--text-dim); }
 .dev-icon.light.on .bulb { fill: var(--amber); filter: drop-shadow(0 0 4px var(--amber)); }
 
@@ -168,7 +199,7 @@ body {
 .power-bars { display: flex; flex-direction: column; gap: 12px; }
 .power-bar-label { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 5px; }
 .power-bar-watts { color: var(--text-dim); }
-.power-bar-track { height: 10px; background: rgba(255, 255, 255, 0.05); border-radius: 999px; overflow: hidden; }
+.power-bar-track { height: 10px; background: var(--track); border-radius: 999px; overflow: hidden; }
 .power-bar-fill { height: 100%; border-radius: 999px; transition: width 0.5s ease; background: var(--accent); }
 .power-bar-fill[data-level='mid'] { background: var(--amber); }
 .power-bar-fill[data-level='high'] { background: var(--red); }
