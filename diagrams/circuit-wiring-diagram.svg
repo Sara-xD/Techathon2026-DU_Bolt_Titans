@@ -22,7 +22,7 @@
 
   <rect width="1180" height="760" fill="#f8fafc"/>
   <text x="40" y="44" class="title">Representative Circuit — One Room (ESP32: state sensing + current sensing)</text>
-  <text x="40" y="66" class="sub">2 fans + 4 lights. Real design uses AC optocouplers per device + a CT/ACS712 current clamp; Wokwi stand-ins in brackets. Full pin table: circuit-guide.md</text>
+  <text x="40" y="66" class="sub">2 fans + 3 lights. Real design uses AC optocouplers per device + a CT/ACS712 current clamp; Wokwi stand-ins in brackets. Full pin table: circuit-guide.md</text>
 
   <!-- ESP32 -->
   <rect x="40" y="110" width="200" height="470" rx="12" class="box-esp"/>
@@ -33,9 +33,8 @@
   <text x="60" y="244" class="pin">GPIO23 ● Light 1 sense</text>
   <text x="60" y="268" class="pin">GPIO22 ● Light 2 sense</text>
   <text x="60" y="292" class="pin">GPIO18 ● Light 3 sense</text>
-  <text x="60" y="316" class="pin">GPIO19 ● Light 4 sense</text>
-  <text x="60" y="348" class="pin">GPIO12/25/26 ●</text>
-  <text x="60" y="368" class="pin">GPIO27/32/33 ● mirror LEDs</text>
+  <text x="60" y="330" class="pin">GPIO12/27/26 ●</text>
+  <text x="60" y="350" class="pin">GPIO25/33 ● mirror LEDs</text>
   <text x="60" y="400" class="pin">GPIO34 (ADC1) ● current</text>
   <text x="60" y="432" class="pin">5V ●</text>
   <text x="60" y="456" class="pin">GND ●</text>
@@ -52,7 +51,6 @@
   <text x="380" y="240" class="t">Light 1 opto OUT → GPIO23</text>
   <text x="380" y="264" class="t">Light 2 opto OUT → GPIO22</text>
   <text x="380" y="288" class="t">Light 3 opto OUT → GPIO18</text>
-  <text x="380" y="312" class="t">Light 4 opto OUT → GPIO19</text>
   <text x="380" y="348" class="t">Each opto's LED side sits across</text>
   <text x="380" y="366" class="t">the device's live line; its transistor</text>
   <text x="380" y="384" class="t">gives the ESP32 an isolated 3.3V</text>
@@ -74,7 +72,6 @@
   <text x="790" y="216" class="t">Light 1 [Wokwi: LED + 220Ω]</text>
   <text x="790" y="240" class="t">Light 2 [Wokwi: LED + 220Ω]</text>
   <text x="790" y="264" class="t">Light 3 [Wokwi: LED + 220Ω]</text>
-  <text x="790" y="288" class="t">Light 4 [Wokwi: LED + 220Ω]</text>
   <text x="790" y="326" class="t">Mirror LEDs echo each sensed</text>
   <text x="790" y="344" class="t">state on the board so the demo</text>
   <text x="790" y="362" class="t">shows what is ON at a glance.</text>

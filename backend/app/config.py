@@ -1,7 +1,7 @@
 """Central configuration and the fixed office layout.
 
 The office setup is fixed for everyone (per the problem statement): 3 rooms,
-each with 2 fans and 3 lights = 18 devices total.
+each with 2 fans and 3 lights = 15 devices total.
 """
 import os
 from dotenv import load_dotenv
@@ -22,14 +22,10 @@ ROOMS = {
     "work2": "Work Room 2",
 }
 
-# Every room has the same devices.
-# NOTE: The problem statement is internally inconsistent -- it says "2 fans and
-# 3 lights" (=5/room) but also repeatedly requires "6 devices per room, 18
-# devices total" and "all 18 devices". We honour the stated hard requirement of
-# 18 total / 6 per room by using 2 fans + 4 lights, which keeps the floor plan's
-# fan count intact. See README for the full rationale.
+# Every room has the same devices: 2 fans + 3 lights = 5 per room, 15 total
+# (confirmed office layout; matches the floor plan).
 FANS_PER_ROOM = 2
-LIGHTS_PER_ROOM = 4
+LIGHTS_PER_ROOM = 3
 
 # Realistic power draw when a device is ON (Watts).
 FAN_WATTS = 60
@@ -43,7 +39,7 @@ WATT_JITTER_PCT = float(os.getenv("WATT_JITTER_PCT", "0.05"))
 OFFICE_OPEN_HOUR = 9   # 9 AM
 OFFICE_CLOSE_HOUR = 17  # 5 PM
 
-# A room with all 6 devices ON continuously longer than this is an alert.
+# A room with all 5 devices ON continuously longer than this is an alert.
 ROOM_ALL_ON_ALERT_HOURS = 2.0
 
 # The ONLY people allowed as dummy actors (from the problem statement).

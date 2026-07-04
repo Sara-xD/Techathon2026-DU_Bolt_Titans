@@ -1,5 +1,4 @@
 import { useLiveState } from './useLiveState'
-import { useTheme } from './useTheme'
 import Header from './components/Header'
 import StatCards from './components/StatCards'
 import FloorPlan from './components/FloorPlan'
@@ -9,7 +8,6 @@ import AlertsPanel from './components/AlertsPanel'
 
 export default function App() {
   const { state, connected } = useLiveState()
-  const { theme, toggle } = useTheme()
 
   if (!state) {
     return (
@@ -25,7 +23,7 @@ export default function App() {
 
   return (
     <div className="app">
-      <Header simTime={state.sim_time} connected={connected} theme={theme} onToggleTheme={toggle} />
+      <Header simTime={state.sim_time} connected={connected} />
 
       <StatCards
         usage={state.usage}

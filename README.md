@@ -3,8 +3,8 @@
 > Techathon Nationals 2026 · Hackathon (Preliminary Round) · Okkhor Technology / IUT Robotics Society
 
 A monitoring system for a small office where people keep leaving the lights and fans
-on. It simulates **18 devices across 3 rooms** and surfaces their live state and power
-usage through **two interfaces that share one backend**:
+on. It simulates **15 devices across 3 rooms** (2 fans + 3 lights each) and surfaces their
+live state and power usage through **two interfaces that share one backend**:
 
 - a **real-time web dashboard** (React) that updates with no page refresh, and
 - a **Discord bot** that answers the boss's questions in plain, friendly language.
@@ -23,10 +23,6 @@ Both read from a **single source of truth**, so they can never disagree about re
 
 ![Dashboard](docs/dashboard.png)
 
-**Light & dark themes** (toggle in the top bar; remembers your choice and follows your OS preference):
-
-![Light mode](docs/dashboard-light.png)
-
 The dashboard is fully responsive and works on phones too:
 
 <img src="docs/dashboard-mobile.png" alt="Mobile dashboard" width="280"/>
@@ -40,13 +36,9 @@ devices. Devices get left running after hours and the bill climbs unnoticed. The
 wants to (a) **see every light and fan live**, (b) **check power being burned**, and
 (c) **ask a bot from Discord** — all backed by the same data.
 
-> **A note on device count (spec reconciliation).** The brief says "2 fans and 3 lights"
-> per room (= 5/room = 15) **but also repeatedly requires "6 devices per room, 18 devices
-> total"** and *"the state of all 18 devices"* as a minimum feature. These can't both be
-> true. We honour the **hard, repeated requirement of 18 total / 6 per room** using
-> **2 fans + 4 lights** per room — this keeps the floor plan's fan count intact and
-> satisfies both "6 per room" and "18 total". It is a single constant in
-> [`backend/app/config.py`](backend/app/config.py) if the organizers intend 15.
+> **Device count.** The office layout is **2 fans + 3 lights per room × 3 rooms = 15
+> devices total**, matching the floor plan. (The room/device layout lives in one place —
+> [`backend/app/config.py`](backend/app/config.py).)
 
 ## 2. Architecture
 
@@ -75,7 +67,7 @@ The bot never keeps its own state — it always asks the backend, which is what 
 │   └── app/
 │       ├── config.py      fixed office layout, power ratings, office hours, jitter
 │       ├── clock.py       accelerated simulated clock
-│       ├── store.py       DeviceStore: 18 devices + energy + continuity + toggle
+│       ├── store.py       DeviceStore: 15 devices + energy + continuity + toggle
 │       ├── alerts.py      after-hours & room-all-on alert engine
 │       ├── simulator.py   asyncio loop that drives the dummy data
 │       └── main.py        REST + WebSocket app
@@ -83,7 +75,6 @@ The bot never keeps its own state — it always asks the backend, which is what 
 │   └── src/
 │       ├── components/    KPI cards, floor plan, room panels, power, alerts
 │       ├── useLiveState.js  WebSocket subscription (auto-reconnect)
-│       ├── useTheme.js      light/dark theme (persisted, follows OS)
 │       └── api.js           REST helper (device toggle)
 ├── bot/                discord.py bot + Gemini + mock CLI
 │   ├── backend_client.py  async REST client
@@ -94,7 +85,7 @@ The bot never keeps its own state — it always asks the backend, which is what 
 │   └── bot.py             Discord commands + proactive alert task
 ├── diagrams/           system diagram + circuit guide + wiring diagram (SVG/PNG)
 ├── tests/              pytest suite (39 tests, no network/Discord/Gemini)
-├── docs/               screenshots (dark, light, mobile)
+├── docs/               screenshots (desktop, mobile)
 ├── run.sh              one-command launcher (backend + dashboard + bot)
 └── requirements-dev.txt   pytest for the test suite
 ```
@@ -271,11 +262,11 @@ pytest
 
 - **One in-memory store as the single source of truth.** Both interfaces read from
   `DeviceStore`; nothing else holds state, so the dashboard and bot can never disagree.
-  Trade-off: state resets on restart. For 18 devices a database is overkill; to persist,
+  Trade-off: state resets on restart. For 15 devices a database is overkill; to persist,
   swap `DeviceStore`'s internals for SQLite/SQLModel behind the same methods
   (`set_status`, `room_devices`, `usage`) — that's the seam.
-- **18 devices, not 15.** The brief contradicts itself (2 fans + 3 lights = 15, but it
-  repeatedly requires "18 total / 6 per room"); we honour the stated hard requirement. See §1.
+- **15 devices (2 fans + 3 lights × 3 rooms).** Matches the office floor plan; the layout is
+  one constant in `backend/app/config.py`.
 - **Accelerated simulated clock.** Two alert rules are time-based (after-hours,
   on-for-2h). A virtual clock lets a 3-minute demo show a full day and both alerts firing,
   without faking the alerts — they're still computed live from real state.
@@ -289,7 +280,7 @@ pytest
   approximating from individual devices, and aggregate to one alert per room to avoid a noisy
   per-device alert flood.
 - **Full-snapshot broadcast (not deltas).** Each tick pushes the whole snapshot — trivially
-  correct and simple for 18 devices; deltas would be premature optimization here.
+  correct and simple for 15 devices; deltas would be premature optimization here.
 
 ---
 

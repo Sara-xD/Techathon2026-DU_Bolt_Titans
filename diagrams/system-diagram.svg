@@ -21,8 +21,8 @@
   <!-- 1. Simulated Device Layer -->
   <rect x="40" y="110" width="200" height="180" rx="12" fill="#ecfdf5" stroke="#10b981" stroke-width="2"/>
   <text x="60" y="140" class="box-title" fill="#047857">Simulated Device Layer</text>
-  <text x="60" y="164" class="box-text">18 devices · 3 rooms</text>
-  <text x="60" y="182" class="box-text">6 fans (60W) + 12 lights (15W)</text>
+  <text x="60" y="164" class="box-text">15 devices · 3 rooms</text>
+  <text x="60" y="182" class="box-text">6 fans (60W) + 9 lights (15W)</text>
   <text x="60" y="206" class="box-text">asyncio simulator loop (SIM_TICK)</text>
   <text x="60" y="224" class="box-text">• toggles state over time</text>
   <text x="60" y="242" class="box-text">• per device: status, watts,</text>
@@ -38,7 +38,7 @@
 
   <rect x="352" y="168" width="246" height="66" rx="10" fill="#ffffff" stroke="#93c5fd"/>
   <text x="366" y="190" class="box-title" font-size="13" fill="#1e3a8a">DeviceStore (in-memory)</text>
-  <text x="366" y="210" class="box-text">18 devices + energy accrual (kWh)</text>
+  <text x="366" y="210" class="box-text">15 devices + energy accrual (kWh)</text>
   <text x="366" y="226" class="box-text">per-room continuity tracking</text>
 
   <rect x="352" y="244" width="246" height="52" rx="10" fill="#ffffff" stroke="#93c5fd"/>
@@ -67,7 +67,7 @@
   <text x="730" y="180" class="box-text">• live device panel (click to toggle)</text>
   <text x="730" y="198" class="box-text">• power meter + per-room</text>
   <text x="730" y="216" class="box-text">• alerts, animated floor plan</text>
-  <text x="730" y="238" class="box-text" fill="#6d28d9">updates with no refresh · light/dark</text>
+  <text x="730" y="238" class="box-text" fill="#6d28d9">updates live with no page refresh</text>
 
   <!-- 3b. Discord Bot -->
   <rect x="710" y="300" width="200" height="150" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="2"/>

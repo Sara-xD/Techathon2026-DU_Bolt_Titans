@@ -5,14 +5,14 @@ from app import config
 from helpers import frozen_store, all_on
 
 
-def test_layout_is_18_devices_6_per_room():
+def test_layout_is_15_devices_5_per_room():
     store, _ = frozen_store()
-    assert len(store.devices) == 18
+    assert len(store.devices) == 15
     for room_id in config.ROOMS:
-        assert len(store.room_devices(room_id)) == 6
+        assert len(store.room_devices(room_id)) == 5
     fans = [d for d in store.devices.values() if d.type == "fan"]
     lights = [d for d in store.devices.values() if d.type == "light"]
-    assert len(fans) == 6 and len(lights) == 12
+    assert len(fans) == 6 and len(lights) == 9
 
 
 def test_device_power_ratings():
@@ -25,11 +25,11 @@ def test_device_power_ratings():
     assert fan.power == 60           # on -> rated
 
 
-def test_all_on_load_is_540w():
+def test_all_on_load_is_495w():
     store, _ = frozen_store()
     all_on(store)
-    assert store.total_power() == 540          # 6*60 + 12*15
-    assert store.room_power("work1") == 180     # 2*60 + 4*15
+    assert store.total_power() == 495          # 6*60 + 9*15
+    assert store.room_power("work1") == 165     # 2*60 + 3*15
 
 
 def test_set_status_records_actor_and_only_allowed_names():
@@ -79,7 +79,7 @@ def test_usage_shape():
     store, _ = frozen_store()
     all_on(store)
     u = store.usage()
-    assert u["total_watts"] == 540
+    assert u["total_watts"] == 495
     assert set(u["per_room"]) == set(config.ROOMS)
     assert u["today_kwh"] >= 0
     assert "sim_time" in u

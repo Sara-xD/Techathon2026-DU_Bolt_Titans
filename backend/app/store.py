@@ -3,7 +3,7 @@
 Both the web dashboard (via WebSocket) and the Discord bot (via REST) read
 from this one store. Nothing else holds device state.
 
-Design trade-off: state is kept in-memory rather than in a database. For 18
+Design trade-off: state is kept in-memory rather than in a database. For 15
 devices that is the simplest choice and is trivially fast for both the
 WebSocket broadcast loop and REST reads; the cost is that state resets on
 restart. To persist it, swap this class's internals for SQLite/SQLModel behind
@@ -66,7 +66,7 @@ class Device:
 
 
 class DeviceStore:
-    """Holds all 18 devices, accumulated energy, and per-room continuity."""
+    """Holds all 15 devices, accumulated energy, and per-room continuity."""
 
     def __init__(self, clock: SimClock):
         self.clock = clock

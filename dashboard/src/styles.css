@@ -1,38 +1,21 @@
 :root {
-  --bg: #0b1020;
-  --bg-elev: #141b2e;
-  --bg-card: #161f36;
-  --border: #253150;
-  --text: #e8edf7;
-  --text-dim: #93a0bd;
-  --accent: #4f8cff;
-  --accent-violet: #9b6bff;
-  --green: #37d6a0;
-  --amber: #ffbb3c;
-  --red: #ff5c6c;
-  --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-  /* theme-aware surfaces (flip in light mode) */
-  --surface-subtle: rgba(255, 255, 255, 0.04);
-  --surface-chip: rgba(255, 255, 255, 0.02);
-  --track: rgba(255, 255, 255, 0.05);
-  --off: #384259;        /* off-state indicator dot */
-  --off-fill: #4a5573;   /* off-state device icons */
-  --page-bg: radial-gradient(1200px 600px at 20% -10%, #182444 0%, #0b1020 55%);
-}
-
-:root[data-theme="light"] {
   --bg: #eef1f8;
   --bg-elev: #ffffff;
   --bg-card: #ffffff;
   --border: #dde3ee;
   --text: #17213a;
   --text-dim: #5a6a85;
+  --accent: #4f8cff;
+  --accent-violet: #9b6bff;
+  --green: #37d6a0;
+  --amber: #ffbb3c;
+  --red: #ff5c6c;
   --shadow: 0 8px 24px rgba(23, 33, 58, 0.08);
   --surface-subtle: rgba(23, 33, 58, 0.04);
   --surface-chip: rgba(23, 33, 58, 0.025);
   --track: rgba(23, 33, 58, 0.08);
-  --off: #c2cbdb;
-  --off-fill: #aeb8cc;
+  --off: #c2cbdb;        /* off-state indicator dot */
+  --off-fill: #aeb8cc;   /* off-state device icons */
   --page-bg: radial-gradient(1200px 600px at 20% -10%, #e7ecf9 0%, #eef1f8 55%);
 }
 
@@ -89,13 +72,6 @@ body {
 .conn.on .dot { background: var(--green); box-shadow: 0 0 10px var(--green); }
 .conn.off { color: var(--amber); }
 .conn.off .dot { background: var(--amber); }
-
-.theme-toggle {
-  background: var(--surface-subtle); border: 1px solid var(--border); color: var(--text);
-  width: 38px; height: 38px; border-radius: 10px; cursor: pointer; font-size: 17px;
-  display: grid; place-items: center; transition: background 0.2s;
-}
-.theme-toggle:hover { background: var(--track); }
 
 /* ---------- Stat cards ---------- */
 .stat-cards {

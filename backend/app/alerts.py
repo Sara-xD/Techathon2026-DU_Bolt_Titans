@@ -2,7 +2,7 @@
 
 Two anomaly types the boss cares about:
   1. after_hours   - any device left ON outside office hours (9 AM-5 PM).
-  2. room_all_on   - a room with all 6 devices ON continuously for > 2 hours.
+  2. room_all_on   - a room with all 5 devices ON continuously for > 2 hours.
 
 Alert ids are deterministic (type:room) so the Discord bot can de-duplicate
 and only announce a condition once while it stays active.

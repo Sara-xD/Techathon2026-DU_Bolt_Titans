@@ -1,6 +1,5 @@
-// Top bar: branding, live simulated clock, office-hours badge, connection state,
-// and a light/dark theme toggle.
-export default function Header({ simTime, connected, theme, onToggleTheme }) {
+// Top bar: branding, live simulated clock, office-hours badge, connection state.
+export default function Header({ simTime, connected }) {
   const d = new Date(simTime)
   const hour = d.getHours()
   const officeHours = hour >= 9 && hour < 17
@@ -17,7 +16,7 @@ export default function Header({ simTime, connected, theme, onToggleTheme }) {
         <span className="logo">⚡</span>
         <div>
           <h1>Office Energy Monitor</h1>
-          <p>Live device &amp; power monitoring · 3 rooms · 18 devices</p>
+          <p>Live device &amp; power monitoring · 3 rooms · 15 devices</p>
         </div>
       </div>
 
@@ -33,14 +32,6 @@ export default function Header({ simTime, connected, theme, onToggleTheme }) {
           <span className="dot" />
           {connected ? 'Live' : 'Reconnecting…'}
         </div>
-        <button
-          className="theme-toggle"
-          onClick={onToggleTheme}
-          title="Toggle light / dark"
-          aria-label="Toggle light or dark theme"
-        >
-          {theme === 'dark' ? '☀️' : '🌙'}
-        </button>
       </div>
     </header>
   )
