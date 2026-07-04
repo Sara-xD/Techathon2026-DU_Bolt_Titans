@@ -35,6 +35,10 @@ LIGHTS_PER_ROOM = 4
 FAN_WATTS = 60
 LIGHT_WATTS = 15
 
+# Live readings jitter +/- this fraction around the rated wattage so the meter
+# looks like a real current sensor rather than a constant. 0 = exact/deterministic.
+WATT_JITTER_PCT = float(os.getenv("WATT_JITTER_PCT", "0.05"))
+
 # Office hours: devices on outside this window are "after hours" (alert).
 OFFICE_OPEN_HOUR = 9   # 9 AM
 OFFICE_CLOSE_HOUR = 17  # 5 PM

@@ -65,6 +65,16 @@ def test_energy_resets_on_day_rollover():
     assert store.energy_wh < 5000.0            # counter reset for the new day
 
 
+def test_toggle_flips_status_and_reading():
+    store, _ = frozen_store()
+    d = store.toggle("work1-fan-1")          # off -> on
+    assert d.status is True and d.power == 60
+    store.toggle("work1-fan-1")              # on -> off
+    assert store.devices["work1-fan-1"].status is False
+    assert store.devices["work1-fan-1"].power == 0
+    assert store.toggle("does-not-exist") is None
+
+
 def test_usage_shape():
     store, _ = frozen_store()
     all_on(store)

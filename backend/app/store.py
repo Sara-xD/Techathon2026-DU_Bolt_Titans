@@ -3,11 +3,26 @@
 Both the web dashboard (via WebSocket) and the Discord bot (via REST) read
 from this one store. Nothing else holds device state.
 """
+import random
 from dataclasses import dataclass, field
 from datetime import datetime
 
 from . import config
 from .clock import SimClock
+
+
+def jitter_watts(rated: int) -> float:
+    """A slightly noisy 'live current sensor' reading around the rated wattage.
+
+    Real devices never draw exactly their nameplate rating, so we add +/- a few
+    percent so the dashboard looks like it's reading a real meter, not a
+    constant. Set WATT_JITTER_PCT=0 for exact, deterministic values (tests do).
+    """
+    pct = config.WATT_JITTER_PCT
+    if pct <= 0:
+        return float(rated)
+    noise = rated * pct * (random.random() * 2 - 1)
+    return round(rated + noise, 1)
 
 
 @dataclass
@@ -17,15 +32,16 @@ class Device:
     type: str          # "fan" | "light"
     room: str          # room id, e.g. "work1"
     room_name: str     # e.g. "Work Room 1"
-    watts: int         # power draw when ON
+    watts: int         # rated power draw when ON
     status: bool = False
+    current_watts: float = 0.0  # live (jittered) reading; 0 when off
     last_changed: datetime = field(default_factory=datetime.now)
     last_changed_by: str | None = None
 
     @property
-    def power(self) -> int:
+    def power(self) -> float:
         """Instantaneous power draw right now (0 when off)."""
-        return self.watts if self.status else 0
+        return self.current_watts if self.status else 0.0
 
     def to_dict(self) -> dict:
         return {
@@ -35,8 +51,8 @@ class Device:
             "room": self.room,
             "room_name": self.room_name,
             "status": self.status,
-            "watts": self.watts,
-            "power": self.power,
+            "watts": self.watts,               # rated
+            "power": round(self.power, 1),      # live/jittered
             "last_changed": self.last_changed.isoformat(),
             "last_changed_by": self.last_changed_by,
         }
@@ -84,8 +100,23 @@ class DeviceStore:
         if d.status == status:
             return
         d.status = status
+        d.current_watts = jitter_watts(d.watts) if status else 0.0
         d.last_changed = self.clock.now()
         d.last_changed_by = by
+
+    def toggle(self, device_id: str, by: str | None = None) -> "Device | None":
+        """Flip one device (used by the dashboard's manual override)."""
+        d = self.devices.get(device_id)
+        if d is None:
+            return None
+        self.set_status(device_id, not d.status, by=by)
+        return d
+
+    def refresh_readings(self) -> None:
+        """Re-jitter the live wattage of ON devices so the meter looks live."""
+        for d in self.devices.values():
+            if d.status:
+                d.current_watts = jitter_watts(d.watts)
 
     def room_devices(self, room_id: str) -> list[Device]:
         return [d for d in self.devices.values() if d.room == room_id]
@@ -116,11 +147,11 @@ class DeviceStore:
                 self.room_all_on_since[room_id] = None
 
     # -- reads --------------------------------------------------------------
-    def total_power(self) -> int:
-        return sum(d.power for d in self.devices.values())
+    def total_power(self) -> float:
+        return round(sum(d.power for d in self.devices.values()), 1)
 
-    def room_power(self, room_id: str) -> int:
-        return sum(d.power for d in self.room_devices(room_id))
+    def room_power(self, room_id: str) -> float:
+        return round(sum(d.power for d in self.room_devices(room_id)), 1)
 
     def usage(self) -> dict:
         return {

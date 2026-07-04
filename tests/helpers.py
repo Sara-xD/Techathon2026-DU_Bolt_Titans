@@ -1,6 +1,11 @@
 """Shared test helpers."""
 from datetime import datetime
 
+from app import config
+
+# Deterministic wattage for assertions (no random current-sensor jitter).
+config.WATT_JITTER_PCT = 0.0
+
 from app.clock import SimClock
 from app.store import DeviceStore
 

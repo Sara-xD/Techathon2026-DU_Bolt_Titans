@@ -83,6 +83,23 @@ def get_devices(room: str | None = None):
     return {"devices": [d.to_dict() for d in devices]}
 
 
+@app.post("/api/devices/{device_id}/toggle")
+async def toggle_device(device_id: str):
+    """Manual override from the dashboard: flip one device on/off.
+
+    Not required by the spec (which is read-only monitoring) but makes the
+    dashboard interactive. The change is broadcast immediately so every client
+    and the Discord bot see it at once -- still one source of truth.
+    """
+    import random
+    d = store.toggle(device_id, by=random.choice(config.ALLOWED_ACTORS))
+    if d is None:
+        raise HTTPException(404, f"Unknown device '{device_id}'")
+    store.update_room_continuity()
+    await manager.broadcast(store.snapshot())
+    return d.to_dict()
+
+
 @app.get("/api/rooms")
 def get_rooms():
     return {"rooms": [store.room_summary(r) for r in config.ROOMS]}

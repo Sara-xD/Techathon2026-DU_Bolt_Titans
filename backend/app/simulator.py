@@ -69,5 +69,6 @@ class Simulator:
                 actor = random.choice(config.ALLOWED_ACTORS)
                 self.store.set_status(d.id, wants_on, by=actor)
 
+        self.store.refresh_readings()   # re-jitter live wattage of ON devices
         self.store.update_room_continuity()
         self.store.accrue_energy()
