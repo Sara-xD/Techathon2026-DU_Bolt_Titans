@@ -267,6 +267,15 @@ pytest
 
 ---
 
+## Team
+
+Techathon Nationals 2026 — Hackathon (Preliminary Round), IUT Robotics Society.
+
+- Mashfikuzzaman Taeen
+- Sara Binte Shafayet
+- Salwa Baki
+- Raisa Tabassum Payal
+
 ## Attributions
 - Conversational bot responses: **Google Gemini** (`gemini-2.5-flash`).
 - Libraries: FastAPI, Uvicorn, React, Vite, discord.py, google-genai, aiohttp, python-dotenv.
