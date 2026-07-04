@@ -85,20 +85,24 @@ async def usage(ctx):
 
 @bot.command(name="alerts")
 async def alerts(ctx):
-    async def facts():
-        a = await api.get_alerts()
-        return fmt.format_alerts(a)
-    await _reply_or_error(ctx, facts(), "active office alerts")
+    # The alert list is already clean and scannable with severity markers,
+    # so we send it as-is rather than paraphrasing it.
+    try:
+        active = await api.get_alerts()
+    except Exception as exc:
+        await ctx.send(f"⚠️ I couldn't reach the office backend right now. ({exc})")
+        return
+    await ctx.send(fmt.format_alerts(active))
 
 
 @bot.command(name="help")
 async def help_cmd(ctx):
     await ctx.send(
-        "**Office Energy Monitor bot** 👋\n"
-        "• `!status` — how every room looks right now\n"
-        "• `!room <name>` — a single room (`drawing`, `work1`, `work2`)\n"
-        "• `!usage` — power draw now + today's energy\n"
-        "• `!alerts` — anything left running it shouldn't be\n"
+        "**Office Energy Monitor**\n"
+        "`!status` — current state of every room\n"
+        "`!room <name>` — a single room (`drawing`, `work1`, `work2`)\n"
+        "`!usage` — total power draw now and energy used today\n"
+        "`!alerts` — anything left running outside office hours\n"
         "I read live from the same backend as the web dashboard."
     )
 
@@ -125,9 +129,12 @@ async def alert_watcher():
         return
     for a in new:
         _announced.add(a["id"])
-        facts = f"ALERT ({a['severity']}): {a['message']}"
-        msg = await humanize(facts, "a proactive heads-up about a device left running")
-        await channel.send(f"⚠️ {msg}")
+        emoji = "🔴" if a["severity"] == "critical" else "🟡"
+        msg = await humanize(
+            a["message"],
+            "a brief, professional heads-up that devices were left on after office hours",
+        )
+        await channel.send(f"{emoji} {msg}")
 
 
 @alert_watcher.before_loop

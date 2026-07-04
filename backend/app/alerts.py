@@ -25,16 +25,18 @@ def compute_alerts(store) -> list[dict]:
         if not office_hours and on_devices:
             fans_on = sum(1 for d in on_devices if d.type == "fan")
             lights_on = sum(1 for d in on_devices if d.type == "light")
+            parts = []
+            if fans_on:
+                parts.append(f"{fans_on} fan" + ("" if fans_on == 1 else "s"))
+            if lights_on:
+                parts.append(f"{lights_on} light" + ("" if lights_on == 1 else "s"))
             alerts.append({
                 "id": f"after_hours:{room_id}",
                 "type": "after_hours",
                 "severity": "warning",
                 "room": room_id,
                 "room_name": room_name,
-                "message": (
-                    f"{room_name} has {fans_on} fan(s) and {lights_on} light(s) "
-                    f"ON after office hours."
-                ),
+                "message": f"{room_name} has {' and '.join(parts)} on after office hours.",
                 "timestamp": now.isoformat(),
             })
 
@@ -50,7 +52,7 @@ def compute_alerts(store) -> list[dict]:
                     "room": room_id,
                     "room_name": room_name,
                     "message": (
-                        f"All devices in {room_name} have been ON for "
+                        f"All devices in {room_name} have been on for "
                         f"{hours_on:.1f} hours straight."
                     ),
                     "timestamp": since.isoformat(),

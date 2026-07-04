@@ -41,7 +41,17 @@ def test_format_status_reports_counts():
     store.set_status("drawing-fan-1", True)
     store.set_status("drawing-light-1", True)
     text = fmt.format_status([store.room_summary("drawing")])
-    assert "1 fan(s) ON, 1 light(s) ON" in text
+    assert "1 fan and 1 light on" in text
+
+
+def test_format_status_pluralizes():
+    store, _ = frozen_store()
+    store.set_status("work2-fan-1", True)
+    store.set_status("work2-fan-2", True)
+    store.set_status("work2-light-1", True)
+    store.set_status("work2-light-2", True)
+    text = fmt.format_status([store.room_summary("work2")])
+    assert "2 fans and 2 lights on" in text
 
 
 def test_format_room_includes_power():
@@ -64,6 +74,13 @@ def test_format_usage_contains_all_numbers():
 
 
 def test_format_alerts_empty_and_nonempty():
-    assert "No active alerts" in fmt.format_alerts([])
-    sample = [{"room_name": "Work Room 2", "message": "left on"}]
-    assert "Work Room 2" in fmt.format_alerts(sample)
+    assert "All clear" in fmt.format_alerts([])
+    sample = [
+        {"severity": "warning", "room_name": "Work Room 2",
+         "message": "Work Room 2 has 2 fans on after office hours."},
+        {"severity": "critical", "room_name": "Work Room 1",
+         "message": "All devices in Work Room 1 have been on for 3.0 hours straight."},
+    ]
+    out = fmt.format_alerts(sample)
+    assert "Work Room 2" in out and "2 active alerts" in out
+    assert "🟡" in out and "🔴" in out   # severity indicators present
