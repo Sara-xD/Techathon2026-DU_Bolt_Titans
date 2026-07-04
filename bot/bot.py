@@ -22,7 +22,7 @@ import discord
 from discord.ext import commands, tasks
 
 import backend_client as api
-import formatters as fmt
+import handlers
 from humanizer import humanize
 
 ALERT_CHANNEL_ID = int(os.getenv("ALERT_CHANNEL_ID", "0") or "0")
@@ -43,68 +43,31 @@ async def on_ready():
         alert_watcher.start()
 
 
-async def _reply_or_error(ctx, coro_facts, context):
-    """Fetch facts, humanize, and reply -- with a clear message if backend is down."""
-    try:
-        facts = await coro_facts
-    except Exception as exc:
-        await ctx.send(f"⚠️ I couldn't reach the office backend right now. ({exc})")
-        return
-    message = await humanize(facts, context)
-    await ctx.send(message)
-
-
+# The Discord commands are thin wrappers around the shared handlers, so the
+# real bot and the mock CLI produce identical replies.
 @bot.command(name="status")
 async def status(ctx):
-    async def facts():
-        rooms = await api.get_rooms()
-        return fmt.format_status(rooms)
-    await _reply_or_error(ctx, facts(), "overall office device status")
+    await ctx.send(await handlers.status_reply())
 
 
 @bot.command(name="room")
 async def room(ctx, *, name: str = ""):
-    room_id = fmt.resolve_room(name) if name else None
-    if room_id is None:
-        await ctx.send("Which room? Try `!room drawing`, `!room work1`, or `!room work2`.")
-        return
-
-    async def facts():
-        r = await api.get_room(room_id)
-        return fmt.format_room(r)
-    await _reply_or_error(ctx, facts(), f"status of {room_id}")
+    await ctx.send(await handlers.room_reply(name or None))
 
 
 @bot.command(name="usage")
 async def usage(ctx):
-    async def facts():
-        u = await api.get_usage()
-        return fmt.format_usage(u)
-    await _reply_or_error(ctx, facts(), "current power usage and today's energy")
+    await ctx.send(await handlers.usage_reply())
 
 
 @bot.command(name="alerts")
 async def alerts(ctx):
-    # The alert list is already clean and scannable with severity markers,
-    # so we send it as-is rather than paraphrasing it.
-    try:
-        active = await api.get_alerts()
-    except Exception as exc:
-        await ctx.send(f"⚠️ I couldn't reach the office backend right now. ({exc})")
-        return
-    await ctx.send(fmt.format_alerts(active))
+    await ctx.send(await handlers.alerts_reply())
 
 
 @bot.command(name="help")
 async def help_cmd(ctx):
-    await ctx.send(
-        "**Office Energy Monitor**\n"
-        "`!status` — current state of every room\n"
-        "`!room <name>` — a single room (`drawing`, `work1`, `work2`)\n"
-        "`!usage` — total power draw now and energy used today\n"
-        "`!alerts` — anything left running outside office hours\n"
-        "I read live from the same backend as the web dashboard."
-    )
+    await ctx.send(handlers.HELP_TEXT)
 
 
 @tasks.loop(seconds=ALERT_POLL_SECONDS)
@@ -145,9 +108,12 @@ async def _before_watcher():
 def main():
     token = os.getenv("DISCORD_TOKEN", "").strip()
     if not token or token.startswith("your-"):
-        raise SystemExit(
-            "DISCORD_TOKEN is not set. Copy bot/.env.example to bot/.env and add your token."
-        )
+        # No Discord token -> run the local mock CLI (same handlers, no Discord
+        # account needed). Great for judges to test the bot instantly.
+        import asyncio
+        import mock_cli
+        asyncio.run(mock_cli.run())
+        return
     bot.run(token)
 
 
