@@ -6,11 +6,31 @@ and tested without a Discord application, token, or server. Set DISCORD_TOKEN
 later and the identical handlers run for real (see bot.py).
 """
 import asyncio
+import sys
 
 import backend_client as api
 import handlers
 
 PREFIX = "!"
+
+
+def _force_utf8_console() -> None:
+    """Make the console UTF-8 so emoji/em-dash replies don't crash the CLI.
+
+    The bot's replies contain ✅ / ⚠️ / 🔴 / 🟡 / — . A native Windows console
+    defaults to cp1252, which can't encode those, so print() raises
+    UnicodeEncodeError. Reconfiguring stdout/stdin to UTF-8 fixes the local demo
+    path. (The real Discord bot is unaffected -- Discord transmits UTF-8
+    regardless of the host OS.)
+    """
+    for stream in (sys.stdout, sys.stdin):
+        try:
+            stream.reconfigure(encoding="utf-8")  # Python 3.7+
+        except Exception:
+            pass  # already UTF-8, or a stream that can't be reconfigured (e.g. a pipe)
+
+
+_force_utf8_console()
 
 
 async def _watch_alerts(seen: set[str], interval: int = 15):
