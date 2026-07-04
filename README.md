@@ -19,7 +19,7 @@ Both read from a **single source of truth**, so they can never disagree about re
 |---|---|
 | Demo video (≤ 3 min) | _add link_ |
 | Live dashboard | **<https://office-energy-monitor.onrender.com>** — one-click deploy in [DEPLOY.md](DEPLOY.md) |
-| Wokwi circuit | _add link (see `diagrams/circuit-guide.md`)_ |
+| Wokwi circuit | **<https://wokwi.com/projects/468588825338810369>** — build notes in [circuit-guide.md](diagrams/circuit-guide.md) |
 
 ![Dashboard](docs/dashboard.png)
 
@@ -260,7 +260,14 @@ A representative one-room ESP32 schematic (state sensing + current sensing) with
 pin-mapping tables, connection list, and electrical reasoning is in
 [`diagrams/circuit-guide.md`](diagrams/circuit-guide.md), with a companion visual wiring
 diagram in [`diagrams/circuit-wiring-diagram.svg`](diagrams/circuit-wiring-diagram.svg).
-Build it in Wokwi and add the screenshot + share link there.
+
+**Built & running in Wokwi:** <https://wokwi.com/projects/468588825338810369> — 5 devices
+(2 fans + 3 lights), an I2C LCD reading live power, and a potentiometer standing in for the
+current-sensor. All five ON reads **165 W** (`2×60 + 3×15`), matching the simulator exactly.
+
+![Wokwi circuit — running board reads 165 W, 5/5 devices ON](diagrams/circuit-wokwi.png)
+
+Reference wiring diagram:
 
 ![Circuit wiring diagram](diagrams/circuit-wiring-diagram.png)
 

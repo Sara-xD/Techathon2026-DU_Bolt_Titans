@@ -183,4 +183,12 @@ Because the design centres on an **ESP32 reporting over Wi-Fi**, **build it in W
 
 > Short on time? A subset (2–3 switches + the pot) is still a valid *representative* circuit — the brief doesn't require wiring every device.
 
-**Wokwi share link:** _(add after building)_
+**Wokwi share link:** <https://wokwi.com/projects/468588825338810369>
+
+![Wokwi circuit — 5 devices, LCD reads 165 W / 5-5 ON](circuit-wokwi.png)
+
+Running board above: all five switches ON → the mirror LEDs light, the LCD reads
+`Power: 165W` / `Devices: 5/5 ON`, and the Serial Monitor emits the backend-shaped
+payload `{"room":"work1","devices":{"Fan 1":true,…,"Light 3":true},"estWatts":165}` —
+exactly the data model the simulator produces (2 × 60 W fans + 3 × 15 W lights = 165 W
+for one room). Turn the potentiometer (the CT-clamp stand-in) to vary `sensedWatts`.
